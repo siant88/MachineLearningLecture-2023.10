@@ -1,0 +1,547 @@
+DB Table      No , 이름 , 포지션,   출신 ,  키  ,
+             SQL   DAP
+
+Operation list, 상세조회, Insert, Update, Delete
+
+데이터프레임
+
+시리즈 - 한개의 컬럼을 말함 
+
+복수의 컬럼은 데이터프레임
+
+	
+-------------------------------------------------------------------------------------------------
+	데이터 프레임에서 슬라이싱
+
+	df.iloc[:, start : end : step] 
+	
+	df.loc[:, start : end]
+
+	
+-------------------------------------------------------------------------------------------------
+
+def sample():
+    if request.method == 'GET':
+        return render_template('02.sample.html')
+    else:    
+        a = request.form['a']
+        b = request.form['b']
+        result = int(a) * int(b)
+        return f'<h1>a={a}, b={b}, {a}*{b}={result}</h1>'
+-------------------------------------------------------------------------------------------------
+
+# localhost:5000/user/james, localhost:5000/user/maria
+@app.route('/user/<uname>')
+def user(uname):
+    return f'<h1>uname = {uname}</h1>'	
+	
+-------------------------------------------------------------------------------------------------
+
+	CMD 창 단축키 
+	탭 자동 완성
+	방향키 위아래 히스토리 기능 ( 방금전에 사용했던 명령어를 사용함 )
+	
+	
+----------------------------------------------------------------------------------------------------
+
+	인플레이스 트루 안하고 밸류값 정렬 
+
+	df3 = df.pivot_table('가격','구').sort_values('가격', ascending=False)
+
+
+
+
+-----------------------------------------------------------------------------------------------------
+from bs4 import BeautifulSoup
+import pandas as pd
+import numpy as np
+from selenium import webdriver
+from selenium.webdriver.common.by import By 
+from selenium.webdriver.common.keys import Keys
+import time
+
+	
+# Opinet 초기화면 > 싼 주유소 찾기 > 지역별
+url = 'https://www.opinet.co.kr/searRgSelect.do'
+driver = webdriver.Chrome()
+driver.get(url)
+time.sleep(2)
+
+# 광역시도에서 서울 입력
+metro = driver.find_element(By.ID, 'SIDO_NM0')
+metro.send_keys('서울')
+
+# 서울시 자치구 리스트 가져오기
+sigungu = driver.find_element(By.ID, 'SIGUNGU_NM0')
+gu_list = sigungu.find_elements(By.TAG_NAME, 'option')
+gu_list[:3]
+
+gu_list[0].text, gu_list[1].text
+
+gu_names = [ gu.text for gu in gu_list[1:]]
+gu_names[:3]
+
+# 강남구 선택
+sigungu.send_keys(gu_names[0])
+
+# 엑셀 저장
+driver.find_element(By.ID, 'glopopd_excel').click()
+time.sleep(2)
+
+# 강남구를 제외한 나머지 자치구에 대해서 주유소 가격정보 엑셀 저장
+for gu in gu_names[1:]:
+    sigungu = driver.find_element(By.ID, 'SIGUNGU_NM0')
+    sigungu.send_keys(gu)
+    time.sleep(3)
+    driver.find_element(By.ID, 'glopopd_excel').click()
+    time.sleep(3)
+
+from glob import glob
+glob('c:/Users/human/Downloads/지역*.xls')
+
+# conda activate base; pip install xlrd   -  엑셀 읽기위해 필요한 프로그램
+filename = 'c:/Users/human/Downloads/지역_위치별(주유소).xls'
+df = pd.read_excel(filename, header=2)
+df.head(3)
+
+
+
+-----------------------------------------------------------------------------------------------------------------------
+	데이터 경진대회 홈페이지
+	
+	https://www.kaggle.com/competitions
+
+	https://dacon.io/competitions/official/236158/overview/description  
+
+	데이콘
+
+
+-----------------------------------------------------------------------------------------------------------------------	
+데이터 프레임 콜롬명 변경
+	
+# '가격' 열을 '평균가격'으로 이름 변경
+
+df.rename(columns={'가격': '평균가격'}, inplace=True)
+	
+-----------------------------------------------------------------------------------------------------------------------
+dfg.sort_values(by='평균가격', ascending=False, inplace= True)
+	특정열의 값의 정렬
+-----------------------------------------------------------------------------------------------------------------------
+피봇 테이블  
+
+df.pivot_table('가격', '상표', aggfunc='mean')
+
+그룹바이
+
+df.groupby('카테고리')[['구독자수']].mean().head()
+
+	피봇테이블과 그룹바이는 순서가 반대 
+-----------------------------------------------------------------------------------------------------------------------
+https://huggingface.co/spaces/akhaliq/AnimeGANv2
+
+	애니메이션 이미지 변경사이트
+----------------------------------------------------------------------------------------------	
+cmd 창에서 
+	conda activate base
+	pip install selenium
+web 에서
+	크롬 브라우저 버전 확인
+	chromedriver 다운로드
+	고급 시스템 설정 > 환경변수 > PATH에 추가 ( 크롬드라이버 위치)
+----------------------------------------------------------------------------------------------
+
+
+.split() 메서드는 문자열을 지정한 구분자를 기준으로 나누어 리스트 형태로 반환합니다.
+
+문자열을 공백을 기준으로 나누면 공백을 구분자로 사용하여 문자열을 단어 단위로 분할합니다.
+
+사용법: 문자열.split(구분자)
+
+
+----------------------------------------------------------------------------------------------
+
+.replace() 메서드는 문자열 내의 특정 부분 문자열을 다른 문자열로 대체합니다.
+
+예를 들어, 문자열에서 특정 단어나 문자를 찾아 다른 단어나 문자로 대체할 수 있습니다.
+
+사용법: 문자열.replace(찾을 문자열, 대체할 문자열)
+
+
+----------------------------------------------------------------------------------------------
+tag
+
+find()    findall()
+
+------------------------------------------------------------------------------------------
+css selector 
+-
+select_one()
+select()
+
+------------------------------------------------------------------------------------------
+selenium
+
+find_element()
+find_elements()
+------------------------------------------------------------------------------------------	
+셀렉터
+
+태그  td th
+
+클래스  . 
+
+id    #
+
+자식 div > p
+
+자손 div p
+
+
+	
+-----------------------------------------------------------------------------------------------------------------------
+
+데이터프레임  생성
+
+data = {
+    "국어": [80, 90, 70, 30],
+    "영어": [90, 70, 60, 40],
+    "수학": [90, 60, 80, 70],
+}
+columns = ["국어", "영어", "수학"]
+index = ["춘향", "몽룡", "향단", "방자"]
+df = pd.DataFrame(data, index=index, columns=columns)
+
+콜럼 과 인덱스를 지정하는 것이 중요함 
+
+-----------------------------------------------------------------------------------------------------------------------
+
+df1 = pd.read_csv('data/sample1.csv',encoding= 'data/파일이름', Thousand = ','   )
+
+읽을때 encoding= 'data/파일이름'  ,  
+
+Thousand = ','  <- 일반적으로 데이터프레임은 정수형 천단위를 저장하면 문자열로 자동변경됨 (무조건인지는 모름)
+
+파일을 읽어 올때 Thousand옵션으로 , 를 주어 문자형 데이터를 정수형 데이터로 불러옴 
+
+-----------------------------------------------------------------------------------------------------------------------
+df4.to_csv('data/sample6.csv, index= False )
+
+저장할때 
+
+index= False    index까지 저장되어, 추후 파일을 읽을 때 Unnamed: 0 컬럼이 생기기 때문에 인덱스 펄스로 
+
+인덱스에  Unnamed: 0 생성불가하게 만듬
+
+
+-----------------------------------------------------------------------------------------------------------------------
+
+
+       price1	price2	int1	int2
+0	1200	1,200	1200	1200
+1	2400	2,400	2400	2400
+2	3200	3,200	3200	3200
+
+#  문자형 열인 price2를    정수형으로 변환시킨 int2 열 생성
+
+df5['int2'] = df5.price2.apply(lambda x: int(x.replace(',', '')))
+
+-----------------------------------------------------------------------------------------------------------------------
+
+
+
+			A	B
+	C1	C2	C1	C2
+0	1.76	0.40	0.98	2.24
+1	1.87	-0.98	0.95	-0.15
+2	-0.10	0.41	0.14	1.45
+3	0.76	0.12	0.44	0.33
+4	1.49	-0.21	0.31	-0.85
+
+np.random.seed(0)
+df3 = pd.DataFrame(np.round(np.random.randn(5, 4), 2),
+                   columns=[["A", "A", "B", "B"],
+                            ["C1", "C2", "C1", "C2"]])
+
+
+다중 인덱스 생성
+
+
+-----------------------------------------------------------------------------------------------------------------------
+
+ssl = iris[iris.species == 'setosa'].sepal_length
+
+데이터 프레임 필터링
+
+iris 의 species의  setosa에서 sepal_length데이터를 가져오게함 
+
+
+
+------------------------------------------------------------------------------------
+.split('.')[0] 
+
+30.5 로 예를 들었을때
+
+[0]으로 하면 30이 되고 
+
+[1]로 하면 5가 된다
+	
+df ['콜롬명']  콜롬명을 기준으로 시리즈로 나타냄
+
+df [['콜롬명']] 콜롬명을 기준으로 데이터프레임으로 나타냄
+
+df.loc['인덱스명'] 인덱스명을 기준으로 시리즈로 나타냄
+
+df.loc[['인덱스명']] 인덱스명을 기준으로 데이터프레임으로 나타냄
+
+df.iloc[0] 인덱스 첫번째 시리즈를 불러옴
+
+df.iloc[1] 인덱스 두번째 시리즈를 불러옴
+
+df.iloc[[0]] 인덱스 첫번째 데이터프레임을 불러옴
+
+axis=1 행을 기준으로 처음부터 끝까지
+
+axis=0 열을 기준으로 처음부터 끝까지
+
+.round(숫자값)  숫자값을 기준으로 소수점 자리를 나타냄
+
+데이터 프레임에서 갱신과 수정은 [] 대괄호 하나로 할수있음
+
+df[ ] = [ ] 
+	
+
+
+	
+-------------------------------------------------------------------------------------
+
+with open('저장할 위치/파일이름','w') as file:
+	file.write('문자열 삽입')
+
+with open('저장한 위치/파일이름)as file:
+	지정할 변수명=file.read()
+
+import string 
+
+string.punctuation  # 특수문자
+
+import re
+
+clean_contents = re.sub('['+ string.punctuation+ ']','',contents).lower()
+
+# 클린콘텐츠 생성 =  콘텐츠에 저장한 특수문자들을 제거하고 소문자로 변경
+
+words = clean_contents.split()
+
+# 블랭크를 기준으로 리스트를 생성 
+
+
+
+
+----------------------------------------------------------------------------------
+a[start : end : step]
+
+
+<button class="btn btn-danger" 
+onclick="location.href='/demo/blog/deleteConfirm/${bid}'">삭제</button>
+
+<a class="nav-link ${menu eq 'blog' ? 'active' : ''}" href="/demo/blog/list">
+
+<div class="col-1"></div>
+
+<div class="row"></div>
+
+<%@ include file="./common/head.jspf" %>
+
+<div class="container" style="margin-top:80px">
+
+<h3><strong>글 작성</strong></h3>
+
+<hr>
+
+<form action="/demo/blog/write" method="post">
+   <table class="table table-borderless">
+         <tr>
+             <td style="width: 10%;"><label class="col-form-label">필명</label></td>
+             <td style="width: 90%;"><input class="form-control" type="text" name="penName"></td>
+         </tr>
+          <tr>
+              <td><label class="col-form-label">제목</label></td>
+              <td><input class="form-control" type="text" name="title"></td>
+          </tr>
+          <tr>
+              <td><label class="col-form-label">내용</label></td>
+              <td><textarea class="form-control" rows="10" name="content"></textarea></td>
+         </tr>
+        <tr>
+             <td colspan="2" style="text-align: center;">
+             <input class="btn btn-primary" type="submit" value="제출">
+              input class="btn btn-secondary" type="reset" value="취소">
+        </td>
+        </tr>
+   </table>
+</form>
+
+<input type="hidden" name="bid" value="${blog.bid}">
+
+<td><textarea class="form-control" rows="10" name="content">
+	${blog.content}
+</textarea></td>
+
+<td colspan="2" style="text-align: center;">
+
+<script>
+	function search() {
+	let field = document.getElementById('field').value;
+	let query = document.getElementById('query').value;
+	//console.log("search()", field, query);
+	location.href = '/demo/blog/list?f=' + field + '&q=' + query;
+         }
+</script>  //검색하는 창에서 필드를 직접선택하고 쿼리 값을 입력해서 검색하는 창
+     
+ field : 예를 들어 필명, 제목, 내용들은 다 field에 속하고 
+ query : DB에 입력을 하거나 수정을 하거나 하는 값을 말한다.
+
+<input class="form-control" placeholder="검색할 내용" id="query" value="${query}"
+onkeyup="if(window.event.keyCode==13) search()">
+
+키코드13은 엔터를 의미함 엔터를 입력함으로서 서치메소드가 작동하게 함 
+
+placeholder 는 입력하는 창에 문자열을 나타나게함 
+
+<button class="btn btn-outline-primary" onclick="search()">검색</button>
+
+<table class="table">
+      <tr class="table-secondary">
+      	<th style="width: 8%;">ID</th>
+      	<th style="width: 14%;">필명</th>
+      	<th style="width: 48%;">제목</th>
+      	<th style="width: 20%;">작성시간</th>
+      	<th style="width: 10%;">조회수</th>
+      </tr>
+      <c:forEach var="blog" items="${blogList}">
+          <tr>
+              <td>${blog.bid}</td>
+              <td>${blog.penName}</td>
+              <td><a href="/demo/blog/detail/${blog.bid}">${blog.title}</a></td>
+              <td>${fn:replace(fn:substring(blog.modTime, 2, 16), 'T', ' ')}</td>
+              <td>${blog.viewCount}</td>
+          </tr>
+       </c:forEach>
+</table>
+
+
+-------------------------------------------------------------------------------------
+***Blog   
+
+기본생성자 생성자 오버로드생성자 게터 세터 투스트링 포함
+--------------------------------------------------------------------------------------
+***BlogController  - 
+
+@Controller 어노테이션이 적용된 클래스 내에서 메소드들은 웹 요청을 
+처리하는 역할을 하며, 이 메소드들은 HTTP 요청을 받아 처리한 후 응답을 반환
+@RequestMapping, @GetMapping, @PostMapping 등의 어노테이션을 사용
+
+GetMapping 
+
+@GetMapping("/blog")
+화면에 값을 셋팅하는 역활
+"/blog" 주소창에 주소를 담당함 
+
+
+PostMapping  
+@PostMapping("/write")
+화면에 있는 값을 가져 올때 사용한다. 
+포스트맵핑은 겟맵핑을 먼저 쓰고 나서 사용할 수 있다.
+
+Model model (스프링에서 jps파일과 연결)
+model.addAttribute("blogList",list);
+에드아티뷰트는 해쉬맵과 비슷하게 키와 발류값을 가지고 있다 
+블로그리스트라는 키를 가지고서 jsp파일과 연결 시켜준다 
+
+--model.addAttribute("데이터이름", "데이터문자열값"):
+
+데이터 이름: "데이터이름"  
+데이터 값: "데이터문자열값" (문자열)
+
+--model.addAttribute("데이터이름", 데이터값):
+
+데이터 이름: "데이터이름"
+데이터 값: 데이터값 (어떤 자료형이든 가능)
+
+model.addAttribute("menu","blog");
+
+데이터 이름 : "menu"   ${menu}   <- blog라는 문자열을 가지고 있음 
+데이터 값 : "blog"
+
+${menu eq 'blog'}   
+-------------------------------------------------------------------------------------
+***BlogDao
+
+@Component
+해당 클래스의 인스턴스가 스프링 컨테이너에서 관리되며, 
+다른 스프링 관련 컴포넌트와 상호작용할 수 있게 됨
+예를 들어 @Controller이 있음
+
+@Component 이것을 사용함으로써 빈으로 등록되었기 때문에 
+스프링 애플리케이션 내에서 필요한 곳에 주입하여 사용 할 수 있음 
+
+
+DB와의 직접적인 명령문들이 있음 
+
+Connection myConnetcion(){
+	Connerciotn conn = null;
+	try{ 
+		String connStr = "localhost..";
+		conn = DriverManager.getCustomer(connStr, user, password);
+	} catch(Exception e){
+		e.printStackTrace();
+	} return conn;
+}
+
+
+-------------------------------------------------------------------------------------
+***BlogDaoOracle
+
+BlogDao는 데이터베이스와의 상호작용을 위한 메소드를 가지고 있고, 
+BlogDaoOracle은 MyBatis를 사용하여 SQL 매핑을 정의한 인터페이스입니다. 
+이 둘은 서로 협력하여 데이터베이스에 접근하고 상호작용합니다.
+@Component 어노테이션은 BlogDao를 스프링 빈으로 등록해주며, 
+@Mapper 어노테이션은 BlogDaoOracle을 MyBatis의 매퍼로 등록합니다.
+
+
+@Mapper
+public interface BlogDaoOracle {
+	
+	@Select("select * from blog where bid=#{bid}")
+	Blog getBlog(int bid);
+	
+	@Select("select * from blog where ${field} like #{query} and isDeleted=0"
+			+ " order by modTime desc" )
+	List<Blog> getBlogList(String field, String query);
+	
+	@Insert("insert into blog(penName, title, content)"
+			+ " values(#{penName}, #{title}, #{content, jdbcType=VARCHAR})")
+	void insertBlog(Blog blog);
+	
+
+
+
+-------------------------------------------------------------------------------------
+***BlogService
+ 
+ 인터페이스로 되어있음
+
+public interface BlogService 
+
+인터페이스는 추상메소드만을 가지고 있기 때문에
+ 
+
+
+
+
+-------------------------------------------------------------------------------------
+***BlogServiceOracleImpl
+
+BlogService를 구현한 클래스로서 
+@Autowired private BlogDaoOracle blogDao;
+오토와이어드를 통해  new BlogDaoOracle()와 같이 직접 객체를 생성할 필요가 없어진다.
